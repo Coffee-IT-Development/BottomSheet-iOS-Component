@@ -1,4 +1,4 @@
-[![Coffee IT - iOS Aroma BottomSheet Component]({link_to_header_image})](https://coffeeit.nl/)
+[![Coffee IT - iOS Aroma BottomSheet Component](Docs/Images/readme-cover.png)](https://coffeeit.nl/)
 
 [![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-Compatible-brightgreen?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-Compatible-brightgreen?style=flat-square)
 [![Swift {swift_version}](https://img.shields.io/badge/Swift-5.6-brightgreen?style=flat-square)](https://img.shields.io/badge/Swift-5.6-brightgreen?style=flat-square)
@@ -18,7 +18,7 @@ This GitHub repository is a mirror, the official repository is hosted privately 
 
 Created by [Coffee IT](https://coffeeit.nl/).
 
-<img src="https://i.imgur.com/eWTuU2m.gif" width="300">
+<img src="Docs/Images/bottomsheet.gif" width="300">
 
 
 # ⚡ Installation
