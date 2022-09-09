@@ -18,16 +18,16 @@ A customizable BottomSheet that can be used from iOS 13 and up. Also has an Andr
 ## ⚡ Installation
 This component requires minimum __iOS 13__.
 
-### SwiftPM
+### 🔨 SwiftPM
 To install the Swift Package, go to Project > Package Dependencies > + > Search or Enter Package URL > Fill in:
 ```
 https://github.com/Coffee-IT-Development/BottomSheet-iOS-Component
 ```
 
-
 ## 📖 Usage
 
-Root
+Import CITBottomSheet and add a CITBottomSheetManager StateObject to the root of your app.
+Then provide it to your root view as an environmentObject.
 
 ```swift
 import CITBottomSheet
@@ -46,8 +46,9 @@ struct CITBottomSheetExampleApp: App {
 }
 ```
 
-
-View
+In a view, retrieve your CITBottomSheetManager using @EnvironmentObject.
+Then, use the bottomSheet modifier on your view like you would use a normal sheet.
+You can call bottomSheetManager.present() with your desired view content to make it appear.
 
 ```swift 
 import CITBottomSheet
