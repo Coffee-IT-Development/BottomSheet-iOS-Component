@@ -156,8 +156,7 @@ let bottomPadding: CGFloat
 
 # 🔗 Related publications
 
-- [BottomSheet for Android]({link_to_android_repo})
-- [BottomSheet Figma design]({link_to_figma})
+- [BottomSheet for Android](https://github.com/Coffee-IT-Development/BottomSheet-Android-Component/)
 
 Look at our other repositories on our [GitHub account](https://github.com/orgs/Coffee-IT-Development/repositories).
 
