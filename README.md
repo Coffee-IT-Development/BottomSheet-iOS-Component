@@ -10,30 +10,24 @@
 [![Instagram](https://img.shields.io/badge/Instagram-CoffeeITNL-blue.svg?style=flat-square)](https://www.instagram.com/coffeeitnl/)
 [![Twitter](https://img.shields.io/badge/Twitter-CoffeeITNL-blue.svg?style=flat-square)](https://twitter.com/coffeeitnl)
 
-# BottomSheet
-
-A customisable BottomSheet that can be used from iOS 13 and up. Also has an Android counterpart and a figma design to complete the circle.
-
-This GitHub repository is a mirror, the official repository is hosted privately by Coffee IT.
-
-Created by [Coffee IT](https://coffeeit.nl/).
+A customizable BottomSheet that can be used from iOS 13 and up. Also has an Android counterpart.
 
 <img src="Docs/Images/bottomsheet.gif" width="300">
 
 
-# ⚡ Installation
+## ⚡ Installation
 This component requires minimum __iOS 13__.
 
-## SwiftPM
+### 🔨 SwiftPM
 To install the Swift Package, go to Project > Package Dependencies > + > Search or Enter Package URL > Fill in:
 ```
 https://github.com/Coffee-IT-Development/BottomSheet-iOS-Component
 ```
 
+## 📖 Usage
 
-# 📖 Usage
-
-Root
+Import CITBottomSheet and add a CITBottomSheetManager StateObject to the root of your app.
+Then provide it to your root view as an environmentObject.
 
 ```swift
 import CITBottomSheet
@@ -52,8 +46,9 @@ struct CITBottomSheetExampleApp: App {
 }
 ```
 
-
-View
+In a view, retrieve your CITBottomSheetManager using @EnvironmentObject.
+Then, use the bottomSheet modifier on your view like you would when using a normal sheet.
+You can call bottomSheetManager.present() with your desired view content to make it appear.
 
 ```swift 
 import CITBottomSheet
@@ -90,7 +85,7 @@ struct CITBottomSheetExampleView: View {
 ```
 
 
-## ⚙️ Customisation
+## ⚙️ Customization
 
 ```swift
 /// Set background color
@@ -154,23 +149,27 @@ let overlayStyle: OverlayStyle?
 let bottomPadding: CGFloat
 ```
 
-# 🔗 Related publications
+## 🔗 Related publications
 
 - [BottomSheet for Android](https://github.com/Coffee-IT-Development/BottomSheet-Android-Component/)
 
 Look at our other repositories on our [GitHub account](https://github.com/orgs/Coffee-IT-Development/repositories).
 
-# ✏️ Changelog
-[Changelog](CHANGELOG.md)
+## ✏️ Changelog
 
-# 📧 Contact
+All notable changes to this project will be documented in the [Changelog](CHANGELOG.md).
+`CITBottomSheet` adheres to [Semantic Versioning](https://semver.org/).
+
+## 📧 Contact
+
 Do you have questions, ideas or need help? Send us an email at contact@coffeeit.nl.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://global-uploads.webflow.com/605a171ee93af49275331843/623b23cdea80a92703e61b42_Logo_black_1.svg" width="100">
   <source media="(prefers-color-scheme: light)" srcset="https://coffeeit.nl/wp-content/uploads/2016/09/logo_dark_small_new.png" width="100">
-  <img alt="CoffeeIT logo" src="https://coffeeit.nl/wp-content/uploads/2016/09/logo_dark_small_new.png">
+  <img alt="CoffeeIT logo" src="https://coffeeit.nl/wp-content/uploads/2016/09/logo_dark_small_new.png" width="100">
 </picture>
 
-# ⚠️ License
-The BottomSheet package is licensed under the terms of the [MIT Open Source license](LICENSE.md).
+## ⚠️ License
+
+Distributed under the MIT License. [See LICENSE](LICENSE.md) for more information.
