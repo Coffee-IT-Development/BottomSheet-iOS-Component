@@ -156,7 +156,8 @@ Look at our other repositories on our [GitHub account](https://github.com/orgs/C
 
 ## ✏️ Changelog
 
-[Changelog](CHANGELOG.md)
+All notable changes to this project will be documented in the [Changelog](CHANGELOG.md).
+`CITBottomSheet` adheres to [Semantic Versioning](https://semver.org/).
 
 ## 📧 Contact
 
