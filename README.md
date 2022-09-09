@@ -47,7 +47,7 @@ struct CITBottomSheetExampleApp: App {
 ```
 
 In a view, retrieve your CITBottomSheetManager using @EnvironmentObject.
-Then, use the bottomSheet modifier on your view like you would use a normal sheet.
+Then, use the bottomSheet modifier on your view like you would when using a normal sheet.
 You can call bottomSheetManager.present() with your desired view content to make it appear.
 
 ```swift 
