@@ -1,5 +1,17 @@
 # Changeslog
 
+All notable changes to this project will be documented in this file.
+`CITBottomSheet` adheres to [Semantic Versioning](https://semver.org/).
+
+#### 1.x Releases
+- `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121)
+- `1.1.x` Releases - [1.1.0](#110)
+- `1.0.x` Releases - [1.0.0](#100)
+
+#### 1.2.1
+
+- improved readme and changelog
+
 #### 1.2.0
 
 - made package open source
