@@ -10,7 +10,7 @@
 [![Instagram](https://img.shields.io/badge/Instagram-CoffeeITNL-blue.svg?style=flat-square)](https://www.instagram.com/coffeeitnl/)
 [![Twitter](https://img.shields.io/badge/Twitter-CoffeeITNL-blue.svg?style=flat-square)](https://twitter.com/coffeeitnl)
 
-A customizable BottomSheet that can be used from iOS 13 and up. Also has an Android counterpart and a figma design to complete the circle.
+A customizable BottomSheet that can be used from iOS 13 and up. Also has an Android counterpart.
 
 <img src="Docs/Images/bottomsheet.gif" width="300">
 
