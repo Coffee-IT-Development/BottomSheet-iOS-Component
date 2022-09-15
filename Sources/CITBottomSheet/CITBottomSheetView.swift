@@ -146,7 +146,7 @@ public struct CITBottomSheetView<Content: View>: View {
                         (self.dragState.isDragging && dragState.translation.height >= 1) ? dragState.translation.height : .zero
                     ) : sheetHeight
                 )
-                .animation(isPresented ? .interpolatingSpring(stiffness: stiffness, damping: damping, initialVelocity: initialVelocity) : nil)
+                .animation(.interpolatingSpring(stiffness: stiffness, damping: damping, initialVelocity: initialVelocity))
                 .gesture(drag)
             }
             .edgesIgnoringSafeArea(.all)
