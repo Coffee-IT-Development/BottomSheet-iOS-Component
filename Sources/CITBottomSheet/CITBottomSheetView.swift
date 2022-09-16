@@ -123,7 +123,8 @@ public struct CITBottomSheetView<Content: View>: View {
                         .frame(minWidth: .zero, maxWidth: modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
                         .cornerRadius(cornerRadius, corners: cornerRadiusCorners)
                         .shadow(radius: shadowRadius)
-
+                        .zIndex(-1)
+                    
                     self.content()
                         .measureSize { size in
                             switch config.height {
@@ -136,9 +137,11 @@ public struct CITBottomSheetView<Content: View>: View {
                         .frame(minWidth: .zero, maxWidth: modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
                         .cornerRadius(cornerRadius, corners: cornerRadiusCorners)
                         .clipped()
+                        .zIndex(1)
 
                     headerView
                         .frame(minWidth: .zero, maxWidth: .infinity)
+                        .zIndex(2)
                 }
                 .padding(.bottom, config.bottomPadding)
                 .offset(
