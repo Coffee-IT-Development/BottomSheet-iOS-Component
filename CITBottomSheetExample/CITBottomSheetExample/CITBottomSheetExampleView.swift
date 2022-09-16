@@ -184,7 +184,7 @@ struct CITBottomSheetExampleView: View {
 
             Spacer()
         }
-        .bottomSheet(isPresented: bottomSheetManager.isPresenting, config: config, onDimiss: nil) {
+        .bottomSheet(isPresented: $bottomSheetManager.isPresenting, config: config, onDimiss: nil) {
             bottomSheetManager.sheet?.content
         }
     }
