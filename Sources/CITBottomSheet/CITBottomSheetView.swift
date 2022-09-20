@@ -123,7 +123,7 @@ public struct CITBottomSheetView<Content: View>: View {
                         .frame(minWidth: .zero, maxWidth: modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
                         .cornerRadius(cornerRadius, corners: cornerRadiusCorners)
                         .shadow(radius: shadowRadius)
-
+                    
                     self.content()
                         .measureSize { size in
                             switch config.height {
