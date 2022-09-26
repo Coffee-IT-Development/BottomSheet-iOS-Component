@@ -29,9 +29,9 @@ import SwiftUI
 public struct CITBottomSheetView<Content: View>: View {
     @GestureState private var dragState = DragState.inactive
     @Binding private var isPresented: Bool
-    @State private var sheetHeight: CGFloat = .zero
-    @State private var initialSheetHeight: CGFloat = .zero
-
+    @State private var sheetHeight: CGFloat = 0
+    @State private var initialSheetHeight: CGFloat = 0
+    
     private var config: CITBottomSheetConfig
     private var content: () -> Content
 
@@ -40,6 +40,10 @@ public struct CITBottomSheetView<Content: View>: View {
     private let damping: CGFloat = 30
     private let initialVelocity: CGFloat = 10
     private let maxHeightPercentage: CGFloat = 0.85
+    
+    var maxHeight: CGFloat {
+        UIScreen.main.bounds.height * maxHeightPercentage
+    }
     
     public init(
         isPresented: Binding<Bool>,
@@ -52,25 +56,28 @@ public struct CITBottomSheetView<Content: View>: View {
     }
 
     public var body: some View {
-        let drag = DragGesture()
-            .updating($dragState) { drag, state, _ in
-                if config.isDraggable {
-                    state = .dragging(translation: drag.translation)
-                }
-            }
-            .onEnded(onDragEnded)
-
-        Group {
-            VStack {
-                Spacer()
-                ZStack(alignment: .top) {
-                    config.backgroundColor.opacity(1.0)
-                        .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
-                        .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
-                        .shadow(radius: shadowRadius)
-                    
-                    self.content()
-                        .measureSize { size in
+        VStack {
+            Spacer()
+            
+            ZStack(alignment: .top) {
+                
+                config.backgroundColor.opacity(1.0)
+                    .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
+                    .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
+                    .shadow(radius: shadowRadius)
+                
+                content()
+                    .background(GeometryReader { geometry in
+                        Color.clear
+                        .onAppear {
+                            switch config.height {
+                            case .auto:
+                                sheetHeight = geometry.size.height + Constants.thirtyTwo
+                            case .fixed(let height):
+                                sheetHeight = height
+                            }
+                        }
+                        .onChange(of: geometry.size) { size in
                             switch config.height {
                             case .auto:
                                 sheetHeight = size.height + Constants.thirtyTwo
@@ -78,24 +85,43 @@ public struct CITBottomSheetView<Content: View>: View {
                                 sheetHeight = height
                             }
                         }
-                        .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
-                        .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
-                        .clipped()
+                    })
+                    
+//                    .measureSize { size in
+//                        switch config.height {
+//                        case .auto:
+//                            sheetHeight = size.height + Constants.thirtyTwo
+//                        case .fixed(let height):
+//                            sheetHeight = height
+//                        }
+//                    }
+                    .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
+                    .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
+                    .clipped()
 
-                    headerView
-                        .frame(minWidth: .zero, maxWidth: .infinity)
-                }
-                .padding(.bottom, config.bottomPadding)
-                .offset(
-                    y: isPresented ? (
-                        (self.dragState.isDragging && dragState.translation.height >= 1) ? dragState.translation.height : .zero
-                    ) : sheetHeight
-                )
-                .animation(.interpolatingSpring(stiffness: stiffness, damping: damping, initialVelocity: initialVelocity))
-                .gesture(drag)
+                headerView
+                    .frame(minWidth: .zero, maxWidth: .infinity)
             }
-            .edgesIgnoringSafeArea(.all)
+            
+            .padding(.bottom, config.bottomPadding)
+            .offset(
+                y: isPresented ? (
+                    (self.dragState.isDragging && dragState.translation.height >= 1 || config.isExpandable) ? min(dragState.translation.height, maxHeight) : .zero
+                ) : sheetHeight
+            )
+            .animation(.interpolatingSpring(stiffness: stiffness, damping: damping, initialVelocity: initialVelocity))
+            .gesture(dragGesture)
+            .overlay(
+                VStack {
+                    Text("dragState: \(String(dragState.isDragging)), translation: y: \(dragState.translation.height)")
+                    Text("sheetHeight: \(sheetHeight)")
+                    Text("intialSheetHeight: \(initialSheetHeight)")
+                }
+                .allowsHitTesting(false)
+            )
+//            .padding(.bottom, -UIScreen.main.bounds.height)
         }
+        .edgesIgnoringSafeArea(.all)
     }
 
     @ViewBuilder
@@ -108,6 +134,16 @@ public struct CITBottomSheetView<Content: View>: View {
         case .none:
             EmptyView()
         }
+    }
+    
+    private var dragGesture: some Gesture {
+        DragGesture()
+            .updating($dragState) { drag, state, _ in
+                if config.isDraggable {
+                    state = .dragging(translation: drag.translation)
+                }
+            }
+            .onEnded(onDragEnded)
     }
     
     private func onDragEnded(drag: DragGesture.Value) {
@@ -127,7 +163,7 @@ public struct CITBottomSheetView<Content: View>: View {
 
         if (drag.location.y - drag.startLocation.y) < 0 {
             initialSheetHeight = sheetHeight
-            sheetHeight = UIScreen.main.bounds.height * maxHeightPercentage
+            sheetHeight = maxHeight
         } else {
             sheetHeight = initialSheetHeight
 

@@ -12,6 +12,7 @@
 		26B22EAE28AA704100FD1F58 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26B22EAD28AA704100FD1F58 /* Assets.xcassets */; };
 		26B22EB128AA704100FD1F58 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26B22EB028AA704100FD1F58 /* Preview Assets.xcassets */; };
 		26B22EBA28AA70CA00FD1F58 /* CITBottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 26B22EB928AA70CA00FD1F58 /* CITBottomSheet */; };
+		815383E128E23FF800F6CE81 /* CITBottomSheetExampleValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815383E028E23FF800F6CE81 /* CITBottomSheetExampleValue.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		26B22EAD28AA704100FD1F58 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		26B22EB028AA704100FD1F58 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		26B22EB728AA705C00FD1F58 /* CITBottomSheet */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CITBottomSheet; path = ..; sourceTree = "<group>"; };
+		815383E028E23FF800F6CE81 /* CITBottomSheetExampleValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CITBottomSheetExampleValue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			children = (
 				26B22EA928AA704000FD1F58 /* CITBottomSheetExampleApp.swift */,
 				26B22EAB28AA704000FD1F58 /* CITBottomSheetExampleView.swift */,
+				815383E028E23FF800F6CE81 /* CITBottomSheetExampleValue.swift */,
 				26B22EAD28AA704100FD1F58 /* Assets.xcassets */,
 				26B22EAF28AA704100FD1F58 /* Preview Content */,
 			);
@@ -153,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				26B22EAC28AA704000FD1F58 /* CITBottomSheetExampleView.swift in Sources */,
+				815383E128E23FF800F6CE81 /* CITBottomSheetExampleValue.swift in Sources */,
 				26B22EAA28AA704000FD1F58 /* CITBottomSheetExampleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
