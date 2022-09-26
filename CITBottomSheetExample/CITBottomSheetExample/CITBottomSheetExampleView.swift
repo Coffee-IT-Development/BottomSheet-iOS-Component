@@ -59,7 +59,7 @@ struct CITBottomSheetExampleView: View {
                         overlayStyle: .default
                     )
 
-                    bottomSheetManager.present() {
+                    bottomSheetManager.present {
                         makeVStackWithSixTextItems()
                     }
                 }
@@ -75,7 +75,7 @@ struct CITBottomSheetExampleView: View {
                         overlayStyle: .default
                     )
 
-                    bottomSheetManager.present() {
+                    bottomSheetManager.present {
                         makeVStackWithSixTextItems()
                     }
                 }
@@ -91,7 +91,7 @@ struct CITBottomSheetExampleView: View {
                         overlayStyle: .default
                     )
 
-                    bottomSheetManager.present() {
+                    bottomSheetManager.present {
                         makeVStackWithSixTextItems()
                     }
                 }
@@ -106,7 +106,7 @@ struct CITBottomSheetExampleView: View {
                         overlayStyle: .default
                     )
 
-                    bottomSheetManager.present() {
+                    bottomSheetManager.present {
                         VStack(spacing: 16) {
                             Text("Item 0")
                             Text("Item 1")
@@ -133,7 +133,7 @@ struct CITBottomSheetExampleView: View {
                         overlayStyle: .custom(color: .red, opacity: 0.33)
                     )
 
-                    bottomSheetManager.present() {
+                    bottomSheetManager.present {
                         makeVStackWithSixTextItems()
                     }
                 }
@@ -147,7 +147,7 @@ struct CITBottomSheetExampleView: View {
                         overlayStyle: .default
                     )
 
-                    bottomSheetManager.present() {
+                    bottomSheetManager.present {
                         makeVStackWithSixTextItems()
                     }
                 }
@@ -163,7 +163,7 @@ struct CITBottomSheetExampleView: View {
                         bottomPadding: 40
                     )
 
-                    bottomSheetManager.present() {
+                    bottomSheetManager.present {
                         makeVStackWithSixTextItems()
                     }
                 }
@@ -175,7 +175,7 @@ struct CITBottomSheetExampleView: View {
                         cornerStyle: .roundedTopCorners
                     )
 
-                    bottomSheetManager.present() {
+                    bottomSheetManager.present {
                         makeVStackWithSixTextItems()
                     }
                 }

@@ -48,21 +48,20 @@ public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
         ZStack(alignment: .bottom) {
             content
             
-            if isPresented {
-                overlayColor
-                    .ignoresSafeArea()
-                    .animation(.easeInOut(duration: 0.5))
-                    .onTapGesture {
-                        withAnimation {
-                            isPresented.toggle()
-                        }
+            overlayColor
+                .ignoresSafeArea()
+                .opacity(isPresented ? 1 : 0)
+                .animation(.easeInOut(duration: 0.3))
+                .onTapGesture {
+                    withAnimation {
+                        isPresented.toggle()
                     }
-            }
+                }
             
             CITBottomSheetView(isPresented: $isPresented, config: config) {
                 sheetContent()
             }
-            .animation(.easeInOut(duration: 0.5))
+            .animation(.easeInOut(duration: 0.3))
             .transition(.move(edge: .bottom))
         }
         .onChange(of: isPresented) { newValue in

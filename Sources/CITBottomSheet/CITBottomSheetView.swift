@@ -27,29 +27,6 @@
 import SwiftUI
 
 public struct CITBottomSheetView<Content: View>: View {
-    public enum DragState {
-        case inactive
-        case dragging(translation: CGSize)
-
-        var translation: CGSize {
-            switch self {
-            case .inactive:
-                return .zero
-            case .dragging(let translation):
-                return translation
-            }
-        }
-
-        var isDragging: Bool {
-            switch self {
-            case .inactive:
-                return false
-            case .dragging:
-                return true
-            }
-        }
-    }
-
     @GestureState private var dragState = DragState.inactive
     @Binding private var isPresented: Bool
     @State private var sheetHeight: CGFloat = .zero
@@ -63,47 +40,15 @@ public struct CITBottomSheetView<Content: View>: View {
     private let damping: CGFloat = 30
     private let initialVelocity: CGFloat = 10
     private let maxHeightPercentage: CGFloat = 0.85
-
-    private var modalWidth: CGFloat {
-        switch config.width {
-        case .`default`:
-            return .infinity
-        case .fixed(let width):
-            return width
-        }
-    }
-
-    private var cornerRadius: CGFloat {
-        switch config.cornerStyle {
-        case .roundedTopCorners, .roundedAllCorners:
-            return DefaultValue.cornerRadius
-        case .roundedTopCornersCustom(let radius), .roundedAllCornersCustom(let radius):
-            return radius
-        case .square:
-            return .zero
-        }
-    }
-
-    private var cornerRadiusCorners: UIRectCorner {
-        switch config.cornerStyle {
-        case .roundedTopCorners, .roundedTopCornersCustom:
-            return [.topLeft, .topRight]
-        case .roundedAllCorners, .roundedAllCornersCustom:
-            return [.allCorners]
-        case .square:
-            return [.allCorners]
-        }
-    }
-
-    @ViewBuilder private var headerView: some View {
-        switch config.accessory {
-        case .grabber:
-            Grabber()
-        case .closeButton(backgroundStyle: let backgroundStyle):
-            CloseButton(backgroundStyle: backgroundStyle, action: close)
-        case .none:
-            EmptyView()
-        }
+    
+    public init(
+        isPresented: Binding<Bool>,
+        config: CITBottomSheetConfig,
+        content: @escaping () -> Content
+    ) {
+        self._isPresented = isPresented
+        self.config = config
+        self.content = content
     }
 
     public var body: some View {
@@ -120,8 +65,8 @@ public struct CITBottomSheetView<Content: View>: View {
                 Spacer()
                 ZStack(alignment: .top) {
                     config.backgroundColor.opacity(1.0)
-                        .frame(minWidth: .zero, maxWidth: modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
-                        .cornerRadius(cornerRadius, corners: cornerRadiusCorners)
+                        .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
+                        .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
                         .shadow(radius: shadowRadius)
                     
                     self.content()
@@ -133,8 +78,8 @@ public struct CITBottomSheetView<Content: View>: View {
                                 sheetHeight = height
                             }
                         }
-                        .frame(minWidth: .zero, maxWidth: modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
-                        .cornerRadius(cornerRadius, corners: cornerRadiusCorners)
+                        .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
+                        .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
                         .clipped()
 
                     headerView
@@ -153,16 +98,18 @@ public struct CITBottomSheetView<Content: View>: View {
         }
     }
 
-    public init(
-        isPresented: Binding<Bool>,
-        config: CITBottomSheetConfig,
-        content: @escaping () -> Content
-    ) {
-        self._isPresented = isPresented
-        self.config = config
-        self.content = content
+    @ViewBuilder
+    private var headerView: some View {
+        switch config.accessory {
+        case .grabber:
+            Grabber()
+        case .closeButton(backgroundStyle: let backgroundStyle):
+            CloseButton(backgroundStyle: backgroundStyle, action: close)
+        case .none:
+            EmptyView()
+        }
     }
-
+    
     private func onDragEnded(drag: DragGesture.Value) {
         guard config.isDraggable else {
             return
