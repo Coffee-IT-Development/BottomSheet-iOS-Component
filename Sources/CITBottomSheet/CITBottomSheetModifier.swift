@@ -29,12 +29,13 @@ import SwiftUI
 public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     @Binding private var isPresented: Bool
+    @State private var isVisible = false
     
     private let animationDuration: TimeInterval = 0.3
     private let onDimiss: CITBottomSheetAction?
     private let sheetContent: () -> SheetContent
     private let config: CITBottomSheetConfig
-
+    
     private var overlayColor: Color {
         switch config.overlayStyle {
         case .`default`:
@@ -45,34 +46,41 @@ public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
             return .clear
         }
     }
-
+    
     public func body(content: Content) -> some View {
         ZStack(alignment: .bottom) {
             content
             
-            overlayColor
-                .ignoresSafeArea()
-                .opacity(isPresented ? 1 : 0)
-                .animation(.easeInOut(duration: animationDuration))
-                .onTapGesture {
-                    withAnimation {
-                        isPresented.toggle()
+            if isVisible {
+                overlayColor
+                    .ignoresSafeArea()
+                    .opacity(isPresented ? 1 : 0)
+                    .animation(.easeInOut(duration: animationDuration))
+                    .onTapGesture {
+                        withAnimation {
+                            isPresented.toggle()
+                        }
                     }
+                
+                CITBottomSheetView(isPresented: $isPresented, config: config) {
+                    sheetContent()
                 }
-            
-            CITBottomSheetView(isPresented: $isPresented, config: config) {
-                sheetContent()
+                .animation(.easeInOut(duration: animationDuration))
+                .transition(.move(edge: .bottom))
             }
-            .animation(.easeInOut(duration: animationDuration))
-            .transition(.move(edge: .bottom))
         }
         .onChange(of: isPresented) { newValue in
             if !newValue {
                 onDimiss?()
+                DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+                    isVisible = false
+                }
+            } else {
+                isVisible = true
             }
         }
     }
-
+    
     public init(
         isPresented: Binding<Bool>,
         config: CITBottomSheetConfig,
