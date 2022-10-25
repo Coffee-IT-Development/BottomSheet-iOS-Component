@@ -81,16 +81,20 @@ public struct CITBottomSheetView<Content: View>: View {
                             switch config.height {
                             case .auto:
                                 sheetHeight = geometry.size.height + Constants.thirtyTwo
+                                initialSheetHeight = sheetHeight
                             case .fixed(let height):
                                 sheetHeight = height
+                                initialSheetHeight = sheetHeight
                             }
                         }
                         .onChange(of: geometry.size) { size in
                             switch config.height {
                             case .auto:
                                 sheetHeight = size.height + Constants.thirtyTwo
+                                initialSheetHeight = sheetHeight
                             case .fixed(let height):
                                 sheetHeight = height
+                                initialSheetHeight = sheetHeight
                             }
                         }
                     })
@@ -170,7 +174,6 @@ public struct CITBottomSheetView<Content: View>: View {
         }
 
         if (drag.location.y - drag.startLocation.y) < 0 {
-            initialSheetHeight = sheetHeight
             sheetHeight = maxHeight
         } else {
             sheetHeight = initialSheetHeight

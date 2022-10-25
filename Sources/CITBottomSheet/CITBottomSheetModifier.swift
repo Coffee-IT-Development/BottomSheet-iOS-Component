@@ -29,6 +29,8 @@ import SwiftUI
 public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     @Binding private var isPresented: Bool
+    
+    private let animationDuration: TimeInterval = 0.3
     private let onDimiss: CITBottomSheetAction?
     private let sheetContent: () -> SheetContent
     private let config: CITBottomSheetConfig
@@ -51,7 +53,7 @@ public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
             overlayColor
                 .ignoresSafeArea()
                 .opacity(isPresented ? 1 : 0)
-                .animation(.easeInOut(duration: 0.3))
+                .animation(.easeInOut(duration: animationDuration))
                 .onTapGesture {
                     withAnimation {
                         isPresented.toggle()
@@ -61,7 +63,7 @@ public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
             CITBottomSheetView(isPresented: $isPresented, config: config) {
                 sheetContent()
             }
-            .animation(.easeInOut(duration: 0.3))
+            .animation(.easeInOut(duration: animationDuration))
             .transition(.move(edge: .bottom))
         }
         .onChange(of: isPresented) { newValue in
