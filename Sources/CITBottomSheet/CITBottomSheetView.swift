@@ -49,6 +49,18 @@ public struct CITBottomSheetView<Content: View>: View {
         config.isExpandable ? UIScreen.main.bounds.height : 0
     }
     
+    var isDraggingDown: Bool {
+        dragState.isDragging && dragState.translation.height > 0
+    }
+    
+    var isExpandableButNotExpanded: Bool {
+        config.isExpandable && sheetHeight != maxHeight
+    }
+    
+    var clampedOffset: CGFloat {
+        isDraggingDown ? dragState.translation.height : max(dragState.translation.height, -maxHeight + sheetHeight)
+    }
+    
     public init(
         isPresented: Binding<Bool>,
         config: CITBottomSheetConfig,
@@ -59,7 +71,6 @@ public struct CITBottomSheetView<Content: View>: View {
         self.content = content
     }
 
-    // TODO: Try add maximum height that offset may never exceed. Relevant if expandable.
     // TODO: Fix issue of switching between large auto size and smaller sheet slight visual glitch, springs from previous height instead of bottom edge.
     
     public var body: some View {
@@ -97,7 +108,7 @@ public struct CITBottomSheetView<Content: View>: View {
             .padding(.bottom, isPresented ? config.bottomPadding : 0)
             .offset(
                 y: isPresented ? (
-                    (dragState.isDragging && dragState.translation.height >= 1 || (config.isExpandable && sheetHeight != maxHeight)) ? dragState.translation.height > 0 ? min(dragState.translation.height, maxHeight) : max(dragState.translation.height, -maxHeight + sheetHeight) : .zero
+                    (isDraggingDown || isExpandableButNotExpanded) ? clampedOffset : .zero
                 ) : sheetHeight
             )
             .animation(.interpolatingSpring(stiffness: stiffness, damping: damping, initialVelocity: initialVelocity))
