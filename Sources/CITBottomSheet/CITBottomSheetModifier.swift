@@ -30,6 +30,7 @@ public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     @Binding private var isPresented: Bool
     @State private var isVisible = false
+    @State private var isPendingReset = false
     
     private let animationDuration: TimeInterval = 0.3
     private let onDimiss: CITBottomSheetAction?
@@ -72,10 +73,15 @@ public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
         .onChange(of: isPresented) { newValue in
             if !newValue {
                 onDimiss?()
+                isPendingReset = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
-                    isVisible = false
+                    if isPendingReset {
+                        isPendingReset = false
+                        isVisible = false
+                    }
                 }
             } else {
+                isPendingReset = false
                 isVisible = true
             }
         }
