@@ -45,6 +45,10 @@ public struct CITBottomSheetView<Content: View>: View {
         UIScreen.main.bounds.height * maxHeightPercentage
     }
     
+    var expandedBackgroundHeight: CGFloat {
+        config.isExpandable ? UIScreen.main.bounds.height : 0
+    }
+    
     public init(
         isPresented: Binding<Bool>,
         config: CITBottomSheetConfig,
@@ -70,7 +74,7 @@ public struct CITBottomSheetView<Content: View>: View {
             ZStack(alignment: .top) {
                 
                 config.backgroundColor.opacity(1.0)
-                    .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
+                    .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue + expandedBackgroundHeight)
                     .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
                     .shadow(radius: shadowRadius)
                 
@@ -114,7 +118,6 @@ public struct CITBottomSheetView<Content: View>: View {
                 headerView
                     .frame(minWidth: .zero, maxWidth: .infinity)
             }
-            
             .padding(.bottom, config.bottomPadding)
             .offset(
                 y: isPresented ? (
@@ -131,7 +134,7 @@ public struct CITBottomSheetView<Content: View>: View {
                 }
                 .allowsHitTesting(false)
             )
-//            .padding(.bottom, -UIScreen.main.bounds.height)
+            .padding(.bottom, -expandedBackgroundHeight)
         }
         .edgesIgnoringSafeArea(.all)
     }
