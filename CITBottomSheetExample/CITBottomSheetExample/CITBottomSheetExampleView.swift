@@ -94,6 +94,7 @@ struct CITBottomSheetExampleView: View {
         exampleSheet = sheet
         config = sheet.config
         showingSheet = true
+        // (Optional) TODO: Fix issue of switching between large auto size and smaller sheet slight visual glitch, springs from previous height instead of bottom edge.
     }
 }
 

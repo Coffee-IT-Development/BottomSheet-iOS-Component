@@ -70,8 +70,6 @@ public struct CITBottomSheetView<Content: View>: View {
         self.config = config
         self.content = content
     }
-
-    // (Optional) TODO: Fix issue of switching between large auto size and smaller sheet slight visual glitch, springs from previous height instead of bottom edge.
     
     public var body: some View {
         VStack {
