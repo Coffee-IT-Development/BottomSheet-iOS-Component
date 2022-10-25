@@ -60,11 +60,8 @@ public struct CITBottomSheetView<Content: View>: View {
     }
 
     // TODO: Try add maximum height that offset may never exceed. Relevant if expandable.
-    // TODO: Try have approach height that may slightly exceed the maximum height if not .strict mode, that way, the user can see impact of dragging the view, but it has increasingly less effect on the sheet.
-    // TODO: Add a bottom extension to the background so that it is shown correctly while transitioning from the not-expanded to the expanded state.
-    // TODO: Fix issue where initialSheetHeight becomes the maximum sheetHeight after expansion and is not restored correctly.
-    // TODO: Fix issues of switching between sheet examples.
-    // TODO: Consider using new chain method approach on this kind of modifier component and discuss how it should be used with Deva.
+    // TODO: Fix issue of switching between large auto size and smaller sheet slight visual glitch, springs from previous height instead of bottom edge.
+    // TODO: Fix issue where floating sheet doesn't disappear entirely.
     // TODO: See if measureSize caused any issues and if not, restore it.
     
     public var body: some View {
