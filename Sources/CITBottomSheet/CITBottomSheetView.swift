@@ -61,53 +61,32 @@ public struct CITBottomSheetView<Content: View>: View {
 
     // TODO: Try add maximum height that offset may never exceed. Relevant if expandable.
     // TODO: Fix issue of switching between large auto size and smaller sheet slight visual glitch, springs from previous height instead of bottom edge.
-    // TODO: Fix issue where floating sheet doesn't disappear entirely.
-    // TODO: See if measureSize caused any issues and if not, restore it.
     
     public var body: some View {
         VStack {
             Spacer()
             
             ZStack(alignment: .top) {
-                
                 config.backgroundColor.opacity(1.0)
-                    .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue + expandedBackgroundHeight)
+                    .frame(
+                        minWidth: .zero,
+                        maxWidth: config.modalWidth,
+                        minHeight: .zero,
+                        maxHeight: $sheetHeight.wrappedValue + expandedBackgroundHeight
+                    )
                     .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
                     .shadow(radius: shadowRadius)
                 
                 content()
                     .background(GeometryReader { geometry in
                         Color.clear
-                        .onAppear {
-                            switch config.height {
-                            case .auto:
-                                sheetHeight = geometry.size.height + Constants.thirtyTwo
-                                initialSheetHeight = sheetHeight
-                            case .fixed(let height):
-                                sheetHeight = height
-                                initialSheetHeight = sheetHeight
+                            .onAppear {
+                                updateSheetHeight(with: geometry.size.height)
                             }
-                        }
-                        .onChange(of: geometry.size) { size in
-                            switch config.height {
-                            case .auto:
-                                sheetHeight = size.height + Constants.thirtyTwo
-                                initialSheetHeight = sheetHeight
-                            case .fixed(let height):
-                                sheetHeight = height
-                                initialSheetHeight = sheetHeight
+                            .onChange(of: geometry.size) { size in
+                                updateSheetHeight(with: size.height)
                             }
-                        }
                     })
-                    
-//                    .measureSize { size in
-//                        switch config.height {
-//                        case .auto:
-//                            sheetHeight = size.height + Constants.thirtyTwo
-//                        case .fixed(let height):
-//                            sheetHeight = height
-//                        }
-//                    }
                     .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
                     .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
                     .clipped()
@@ -198,6 +177,17 @@ public struct CITBottomSheetView<Content: View>: View {
             return (1 - val)
         } else {
             return val
+        }
+    }
+    
+    private func updateSheetHeight(with geometryHeight: CGFloat) {
+        switch config.height {
+        case .auto:
+            sheetHeight = geometryHeight + Constants.thirtyTwo
+            initialSheetHeight = sheetHeight
+        case .fixed(let height):
+            sheetHeight = height
+            initialSheetHeight = sheetHeight
         }
     }
 
