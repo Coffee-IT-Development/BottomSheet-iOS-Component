@@ -115,7 +115,7 @@ public struct CITBottomSheetView<Content: View>: View {
                 headerView
                     .frame(minWidth: .zero, maxWidth: .infinity)
             }
-            .padding(.bottom, config.bottomPadding)
+            .padding(.bottom, isPresented ? config.bottomPadding : 0)
             .offset(
                 y: isPresented ? (
                     (self.dragState.isDragging && dragState.translation.height >= 1 || config.isExpandable) ? min(dragState.translation.height, maxHeight) : .zero
