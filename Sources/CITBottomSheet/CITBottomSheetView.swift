@@ -97,14 +97,14 @@ public struct CITBottomSheetView<Content: View>: View {
             .padding(.bottom, isPresented ? config.bottomPadding : 0)
             .offset(
                 y: isPresented ? (
-                    (self.dragState.isDragging && dragState.translation.height >= 1 || config.isExpandable) ? min(dragState.translation.height, maxHeight) : .zero
+                    (dragState.isDragging && dragState.translation.height >= 1 || (config.isExpandable && sheetHeight != maxHeight)) ? dragState.translation.height > 0 ? min(dragState.translation.height, maxHeight) : max(dragState.translation.height, -maxHeight + sheetHeight) : .zero
                 ) : sheetHeight
             )
             .animation(.interpolatingSpring(stiffness: stiffness, damping: damping, initialVelocity: initialVelocity))
             .gesture(dragGesture)
             .overlay(
                 VStack {
-                    Text("dragState: \(String(dragState.isDragging)), translation: y: \(dragState.translation.height)")
+                    Text("dragState: \(String(dragState.isDragging)), translation: y: \(dragState.translation.height), capped: \(min(dragState.translation.height, maxHeight))")
                     Text("sheetHeight: \(sheetHeight)")
                     Text("intialSheetHeight: \(initialSheetHeight)")
                 }
