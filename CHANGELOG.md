@@ -11,7 +11,6 @@ All notable changes to this project will be documented in this file.
 
 #### 1.3.0
 
-- fixed a lot of issues with the example app, including the following:
 - fixed issue where after closing some sheets, the grabber and the overlay may remained, blocking the user interaction.
 - fixed issue where after expanding to a full sheet size, and closing a sheet, opening another sheet would sometimes force it be shown in the larger expandable size.
 - fixed issue where when closing the sheet, the overlay was closed instantly instead of being faded out.
