@@ -27,34 +27,11 @@
 import SwiftUI
 
 public struct CITBottomSheetView<Content: View>: View {
-    public enum DragState {
-        case inactive
-        case dragging(translation: CGSize)
-
-        var translation: CGSize {
-            switch self {
-            case .inactive:
-                return .zero
-            case .dragging(let translation):
-                return translation
-            }
-        }
-
-        var isDragging: Bool {
-            switch self {
-            case .inactive:
-                return false
-            case .dragging:
-                return true
-            }
-        }
-    }
-
     @GestureState private var dragState = DragState.inactive
     @Binding private var isPresented: Bool
-    @State private var sheetHeight: CGFloat = .zero
-    @State private var initialSheetHeight: CGFloat = .zero
-
+    @State private var sheetHeight: CGFloat = 0
+    @State private var initialSheetHeight: CGFloat = 0
+    
     private var config: CITBottomSheetConfig
     private var content: () -> Content
 
@@ -63,96 +40,27 @@ public struct CITBottomSheetView<Content: View>: View {
     private let damping: CGFloat = 30
     private let initialVelocity: CGFloat = 10
     private let maxHeightPercentage: CGFloat = 0.85
-
-    private var modalWidth: CGFloat {
-        switch config.width {
-        case .`default`:
-            return .infinity
-        case .fixed(let width):
-            return width
-        }
+    
+    var maxHeight: CGFloat {
+        UIScreen.main.bounds.height * maxHeightPercentage
     }
-
-    private var cornerRadius: CGFloat {
-        switch config.cornerStyle {
-        case .roundedTopCorners, .roundedAllCorners:
-            return DefaultValue.cornerRadius
-        case .roundedTopCornersCustom(let radius), .roundedAllCornersCustom(let radius):
-            return radius
-        case .square:
-            return .zero
-        }
+    
+    var expandedBackgroundHeight: CGFloat {
+        config.isExpandable ? UIScreen.main.bounds.height : 0
     }
-
-    private var cornerRadiusCorners: UIRectCorner {
-        switch config.cornerStyle {
-        case .roundedTopCorners, .roundedTopCornersCustom:
-            return [.topLeft, .topRight]
-        case .roundedAllCorners, .roundedAllCornersCustom:
-            return [.allCorners]
-        case .square:
-            return [.allCorners]
-        }
+    
+    var isDraggingDown: Bool {
+        dragState.isDragging && dragState.translation.height > 0
     }
-
-    @ViewBuilder private var headerView: some View {
-        switch config.accessory {
-        case .grabber:
-            Grabber()
-        case .closeButton(backgroundStyle: let backgroundStyle):
-            CloseButton(backgroundStyle: backgroundStyle, action: close)
-        case .none:
-            EmptyView()
-        }
+    
+    var isExpandableButNotExpanded: Bool {
+        config.isExpandable && sheetHeight != maxHeight
     }
-
-    public var body: some View {
-        let drag = DragGesture()
-            .updating($dragState) { drag, state, _ in
-                if config.isDraggable {
-                    state = .dragging(translation: drag.translation)
-                }
-            }
-            .onEnded(onDragEnded)
-
-        Group {
-            VStack {
-                Spacer()
-                ZStack(alignment: .top) {
-                    config.backgroundColor.opacity(1.0)
-                        .frame(minWidth: .zero, maxWidth: modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
-                        .cornerRadius(cornerRadius, corners: cornerRadiusCorners)
-                        .shadow(radius: shadowRadius)
-                    
-                    self.content()
-                        .measureSize { size in
-                            switch config.height {
-                            case .auto:
-                                sheetHeight = size.height + Constants.thirtyTwo
-                            case .fixed(let height):
-                                sheetHeight = height
-                            }
-                        }
-                        .frame(minWidth: .zero, maxWidth: modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
-                        .cornerRadius(cornerRadius, corners: cornerRadiusCorners)
-                        .clipped()
-
-                    headerView
-                        .frame(minWidth: .zero, maxWidth: .infinity)
-                }
-                .padding(.bottom, config.bottomPadding)
-                .offset(
-                    y: isPresented ? (
-                        (self.dragState.isDragging && dragState.translation.height >= 1) ? dragState.translation.height : .zero
-                    ) : sheetHeight
-                )
-                .animation(.interpolatingSpring(stiffness: stiffness, damping: damping, initialVelocity: initialVelocity))
-                .gesture(drag)
-            }
-            .edgesIgnoringSafeArea(.all)
-        }
+    
+    var clampedOffset: CGFloat {
+        isDraggingDown ? dragState.translation.height : max(dragState.translation.height, -maxHeight + sheetHeight)
     }
-
+    
     public init(
         isPresented: Binding<Bool>,
         config: CITBottomSheetConfig,
@@ -162,7 +70,74 @@ public struct CITBottomSheetView<Content: View>: View {
         self.config = config
         self.content = content
     }
+    
+    public var body: some View {
+        VStack {
+            Spacer()
+            
+            ZStack(alignment: .top) {
+                config.backgroundColor.opacity(1.0)
+                    .frame(
+                        minWidth: .zero,
+                        maxWidth: config.modalWidth,
+                        minHeight: .zero,
+                        maxHeight: $sheetHeight.wrappedValue + expandedBackgroundHeight
+                    )
+                    .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
+                    .shadow(radius: shadowRadius)
+                
+                content()
+                    .background(GeometryReader { geometry in
+                        Color.clear
+                            .onAppear {
+                                updateSheetHeight(with: geometry.size.height)
+                            }
+                            .onChange(of: geometry.size) { size in
+                                updateSheetHeight(with: size.height)
+                            }
+                    })
+                    .frame(minWidth: .zero, maxWidth: config.modalWidth, minHeight: .zero, maxHeight: $sheetHeight.wrappedValue)
+                    .cornerRadius(config.cornerRadius, corners: config.cornerRadiusCorners)
+                    .clipped()
 
+                headerView
+                    .frame(minWidth: .zero, maxWidth: .infinity)
+            }
+            .padding(.bottom, isPresented ? config.bottomPadding : 0)
+            .offset(
+                y: isPresented ? (
+                    (isDraggingDown || isExpandableButNotExpanded) ? clampedOffset : .zero
+                ) : sheetHeight
+            )
+            .animation(.interpolatingSpring(stiffness: stiffness, damping: damping, initialVelocity: initialVelocity))
+            .gesture(dragGesture)
+            .padding(.bottom, -expandedBackgroundHeight)
+        }
+        .edgesIgnoringSafeArea(.all)
+    }
+
+    @ViewBuilder
+    private var headerView: some View {
+        switch config.accessory {
+        case .grabber:
+            Grabber()
+        case .closeButton(backgroundStyle: let backgroundStyle):
+            CloseButton(backgroundStyle: backgroundStyle, action: close)
+        case .none:
+            EmptyView()
+        }
+    }
+    
+    private var dragGesture: some Gesture {
+        DragGesture()
+            .updating($dragState) { drag, state, _ in
+                if config.isDraggable {
+                    state = .dragging(translation: drag.translation)
+                }
+            }
+            .onEnded(onDragEnded)
+    }
+    
     private func onDragEnded(drag: DragGesture.Value) {
         guard config.isDraggable else {
             return
@@ -179,8 +154,7 @@ public struct CITBottomSheetView<Content: View>: View {
         }
 
         if (drag.location.y - drag.startLocation.y) < 0 {
-            initialSheetHeight = sheetHeight
-            sheetHeight = UIScreen.main.bounds.height * maxHeightPercentage
+            sheetHeight = maxHeight
         } else {
             sheetHeight = initialSheetHeight
 
@@ -204,6 +178,17 @@ public struct CITBottomSheetView<Content: View>: View {
             return (1 - val)
         } else {
             return val
+        }
+    }
+    
+    private func updateSheetHeight(with geometryHeight: CGFloat) {
+        switch config.height {
+        case .auto:
+            sheetHeight = geometryHeight + Constants.thirtyTwo
+            initialSheetHeight = sheetHeight
+        case .fixed(let height):
+            sheetHeight = height
+            initialSheetHeight = sheetHeight
         }
     }
 

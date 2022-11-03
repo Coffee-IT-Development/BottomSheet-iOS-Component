@@ -29,10 +29,14 @@ import SwiftUI
 public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
     @Environment(\.safeAreaInsets) private var safeAreaInsets
     @Binding private var isPresented: Bool
+    @State private var isVisible = false
+    @State private var isPendingReset = false
+    
+    private let animationDuration: TimeInterval = 0.3
     private let onDimiss: CITBottomSheetAction?
     private let sheetContent: () -> SheetContent
     private let config: CITBottomSheetConfig
-
+    
     private var overlayColor: Color {
         switch config.overlayStyle {
         case .`default`:
@@ -43,35 +47,46 @@ public struct CITBottomSheetModifier<SheetContent: View>: ViewModifier {
             return .clear
         }
     }
-
+    
     public func body(content: Content) -> some View {
         ZStack(alignment: .bottom) {
             content
             
-            if isPresented {
+            if isVisible {
                 overlayColor
                     .ignoresSafeArea()
-                    .animation(.easeInOut(duration: 0.5))
+                    .opacity(isPresented ? 1 : 0)
+                    .animation(.easeInOut(duration: animationDuration))
                     .onTapGesture {
                         withAnimation {
                             isPresented.toggle()
                         }
                     }
+                
+                CITBottomSheetView(isPresented: $isPresented, config: config) {
+                    sheetContent()
+                }
+                .animation(.easeInOut(duration: animationDuration))
+                .transition(.move(edge: .bottom))
             }
-            
-            CITBottomSheetView(isPresented: $isPresented, config: config) {
-                sheetContent()
-            }
-            .animation(.easeInOut(duration: 0.5))
-            .transition(.move(edge: .bottom))
         }
         .onChange(of: isPresented) { newValue in
             if !newValue {
                 onDimiss?()
+                isPendingReset = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+                    if isPendingReset {
+                        isPendingReset = false
+                        isVisible = false
+                    }
+                }
+            } else {
+                isPendingReset = false
+                isVisible = true
             }
         }
     }
-
+    
     public init(
         isPresented: Binding<Bool>,
         config: CITBottomSheetConfig,

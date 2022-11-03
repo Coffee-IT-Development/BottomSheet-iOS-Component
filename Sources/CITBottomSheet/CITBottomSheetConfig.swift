@@ -119,6 +119,40 @@ public struct CITBottomSheetConfig {
     /// Optional
     /// Default value = `.zero`
     let bottomPadding: CGFloat
+    
+    /// Modal width
+    var modalWidth: CGFloat {
+        switch width {
+        case .`default`:
+            return .infinity
+        case .fixed(let width):
+            return width
+        }
+    }
+    
+    /// Corner radius
+    var cornerRadius: CGFloat {
+        switch cornerStyle {
+        case .roundedTopCorners, .roundedAllCorners:
+            return DefaultValue.cornerRadius
+        case .roundedTopCornersCustom(let radius), .roundedAllCornersCustom(let radius):
+            return radius
+        case .square:
+            return .zero
+        }
+    }
+    
+    /// Corner radius targets
+    var cornerRadiusCorners: UIRectCorner {
+        switch cornerStyle {
+        case .roundedTopCorners, .roundedTopCornersCustom:
+            return [.topLeft, .topRight]
+        case .roundedAllCorners, .roundedAllCornersCustom:
+            return [.allCorners]
+        case .square:
+            return [.allCorners]
+        }
+    }
 
     public init(
         backgroundColor: Color,

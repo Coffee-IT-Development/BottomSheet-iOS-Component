@@ -28,16 +28,14 @@ import CITBottomSheet
 import SwiftUI
 
 struct CITBottomSheetExampleView: View {
-    @EnvironmentObject private var bottomSheetManager: CITBottomSheetManager
-
-    private let backgroundColor = Color("bottomSheetBackgroundColor")
-
+    @State private var exampleSheet: CITBottomSheetExampleValue = .normal
+    @State private var showingSheet = false
     @State private var config = CITBottomSheetConfig(
         backgroundColor: Color("bottomSheetBackgroundColor"),
         height: .fixed(height: 300),
         cornerStyle: .roundedTopCorners
     )
-
+    
     var body: some View {
         VStack(spacing: 16) {
             Image("aroma-component-header")
@@ -48,135 +46,12 @@ struct CITBottomSheetExampleView: View {
                 .font(.title)
                 .padding(.bottom, 16)
 
-            Group {
-                Button("Open BottomSheet with Grabber") {
-                    config = CITBottomSheetConfig(
-                        backgroundColor: backgroundColor,
-                        height: .fixed(height: 300),
-                        width: .default,
-                        cornerStyle: .roundedTopCorners,
-                        accessory: .grabber,
-                        overlayStyle: .default
-                    )
-
-                    bottomSheetManager.present() {
-                        makeVStackWithSixTextItems()
-                    }
-                }
-
-                Button("Open BottomSheet with Grabber and Expendable") {
-                    config = CITBottomSheetConfig(
-                        backgroundColor: backgroundColor,
-                        height: .fixed(height: 300),
-                        width: .default,
-                        isExpandable: true,
-                        cornerStyle: .roundedTopCorners,
-                        accessory: .grabber,
-                        overlayStyle: .default
-                    )
-
-                    bottomSheetManager.present() {
-                        makeVStackWithSixTextItems()
-                    }
-                }
-
-                Button("Open BottomSheet with Close Button") {
-                    config = CITBottomSheetConfig(
-                        backgroundColor: backgroundColor,
-                        height: .fixed(height: 300),
-                        width: .default,
-                        isDraggable: false,
-                        cornerStyle: .roundedTopCorners,
-                        accessory: .closeButton(backgroundStyle: .dark),
-                        overlayStyle: .default
-                    )
-
-                    bottomSheetManager.present() {
-                        makeVStackWithSixTextItems()
-                    }
-                }
-
-                Button("Open BottomSheet with Squared corners, orange background, and auto height") {
-                    config = CITBottomSheetConfig(
-                        backgroundColor: .orange,
-                        height: .auto,
-                        width: .default,
-                        cornerStyle: .square,
-                        accessory: .grabber,
-                        overlayStyle: .default
-                    )
-
-                    bottomSheetManager.present() {
-                        VStack(spacing: 16) {
-                            Text("Item 0")
-                            Text("Item 1")
-                            Text("Item 2")
-                            Text("Item 3")
-                            Text("Item 4")
-                            Text("Item 5")
-                            Text("Item 6")
-                            Text("Item 7")
-                            Text("Item 8")
-                            Text("Item 9")
-                        }
-                        .padding(32)
-                    }
-                }
-
-                Button("Open BottomSheet with custom overlay") {
-                    config = CITBottomSheetConfig(
-                        backgroundColor: backgroundColor,
-                        height: .fixed(height: 300),
-                        width: .default,
-                        cornerStyle: .roundedTopCorners,
-                        accessory: .grabber,
-                        overlayStyle: .custom(color: .red, opacity: 0.33)
-                    )
-
-                    bottomSheetManager.present() {
-                        makeVStackWithSixTextItems()
-                    }
-                }
-
-                Button("Open BottomSheet (small)") {
-                    config = CITBottomSheetConfig(
-                        backgroundColor: backgroundColor,
-                        height: .fixed(height: 300),
-                        width: .fixed(width: UIScreen.main.bounds.width - 40),
-                        cornerStyle: .roundedTopCorners,
-                        overlayStyle: .default
-                    )
-
-                    bottomSheetManager.present() {
-                        makeVStackWithSixTextItems()
-                    }
-                }
-
-                Button("Open BottomSheet floating") {
-                    config = CITBottomSheetConfig(
-                        backgroundColor: backgroundColor,
-                        height: .fixed(height: 300),
-                        width: .fixed(width: UIScreen.main.bounds.width - 40),
-                        cornerStyle: .roundedAllCorners,
-                        accessory: .grabber,
-                        overlayStyle: .default,
-                        bottomPadding: 40
-                    )
-
-                    bottomSheetManager.present() {
-                        makeVStackWithSixTextItems()
-                    }
-                }
-
-                Button("Open BottomSheet") {
-                    config = CITBottomSheetConfig(
-                        backgroundColor: backgroundColor,
-                        height: .fixed(height: 300),
-                        cornerStyle: .roundedTopCorners
-                    )
-
-                    bottomSheetManager.present() {
-                        makeVStackWithSixTextItems()
+            VStack(spacing: 16) {
+                ForEach(CITBottomSheetExampleValue.allCases) { sheet in
+                    Button {
+                        show(sheet: sheet)
+                    } label: {
+                        Text(sheet.title)
                     }
                 }
             }
@@ -184,17 +59,41 @@ struct CITBottomSheetExampleView: View {
 
             Spacer()
         }
-        .bottomSheet(isPresented: $bottomSheetManager.isPresenting, config: config, onDimiss: nil) {
-            bottomSheetManager.sheet?.content
+        .bottomSheet(isPresented: $showingSheet, config: config) {
+            bottomSheetContent
         }
     }
-
-    @ViewBuilder func makeVStackWithSixTextItems() -> some View {
-        VStack {
-            ForEach(1...6, id: \.self) {
+    
+    @ViewBuilder
+    var bottomSheetContent: some View {
+        switch exampleSheet {
+        case .withGrabber,
+             .withGrabberAndExpandable,
+             .withCloseButton,
+             .customOverlay,
+             .small,
+             .floating,
+             .normal:
+            exampleStack(itemCount: 6)
+        case .withSquareCornersOrangeAndAutoHeight:
+            exampleStack(itemCount: 10, spacing: 16, padding: 32)
+        }
+    }
+    
+    @ViewBuilder
+    private func exampleStack(itemCount: Int, spacing: CGFloat = 8, padding: CGFloat = 0) -> some View {
+        VStack(spacing: spacing) {
+            ForEach(1 ... itemCount, id: \.self) {
                 Text("Item \($0)")
             }
         }
+        .padding(padding)
+    }
+    
+    private func show(sheet: CITBottomSheetExampleValue) {
+        exampleSheet = sheet
+        config = sheet.config
+        showingSheet = true
     }
 }
 
