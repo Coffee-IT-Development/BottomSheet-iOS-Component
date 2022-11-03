@@ -24,19 +24,27 @@
 // SOFTWARE.
 //
 
-import SwiftUI
+import Foundation
 
-struct MeasureSizeModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content.background(GeometryReader { geometry in
-            Color.clear.preference(key: SizePreferenceKey.self, value: geometry.size)
-        })
+enum DragState {
+    case inactive
+    case dragging(translation: CGSize)
+
+    var translation: CGSize {
+        switch self {
+        case .inactive:
+            return .zero
+        case .dragging(let translation):
+            return translation
+        }
     }
-}
 
-extension View {
-    func measureSize(perform action: @escaping (CGSize) -> Void) -> some View {
-        modifier(MeasureSizeModifier())
-            .onPreferenceChange(SizePreferenceKey.self, perform: action)
+    var isDragging: Bool {
+        switch self {
+        case .inactive:
+            return false
+        case .dragging:
+            return true
+        }
     }
 }

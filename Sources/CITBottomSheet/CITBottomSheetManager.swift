@@ -32,14 +32,11 @@ public class CITBottomSheetManager: ObservableObject {
     }
 
     @Published public var sheet: Sheet?
-
-    public lazy var isPresenting = Binding<Bool>(
-        get: { self.sheet != nil },
-        set: { if !$0 { self.sheet = nil } }
-    )
+    @Published public var isPresenting = false
 
     public func present<Content: View>(@ViewBuilder content: () -> Content) {
         sheet = Sheet(content: AnyView(content()))
+        isPresenting = true
     }
 
     public init() { }
