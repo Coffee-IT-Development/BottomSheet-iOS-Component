@@ -22,13 +22,25 @@ enum CITBottomSheetExampleValue: String, CaseIterable, Identifiable {
         rawValue
     }
     
+    var defaultFixedHeight: CITBottomSheetConfig.Height {
+        .fixed(height: 300)
+    }
+    
+    var defaultWidth: CITBottomSheetConfig.Width {
+        .default
+    }
+    
+    var defaultSmallWidth: CITBottomSheetConfig.Width {
+        .fixed(width: UIScreen.main.bounds.width - 40)
+    }
+    
     var config: CITBottomSheetConfig {
         switch self {
         case .withGrabber:
             return CITBottomSheetConfig(
                 backgroundColor: backgroundColor,
-                height: .fixed(height: 300),
-                width: .default,
+                height: defaultFixedHeight,
+                width: defaultWidth,
                 cornerStyle: .roundedTopCorners,
                 accessory: .grabber,
                 overlayStyle: .default
@@ -36,8 +48,8 @@ enum CITBottomSheetExampleValue: String, CaseIterable, Identifiable {
         case .withGrabberAndExpandable:
             return CITBottomSheetConfig(
                 backgroundColor: backgroundColor,
-                height: .fixed(height: 300),
-                width: .default,
+                height: defaultFixedHeight,
+                width: defaultWidth,
                 isExpandable: true,
                 cornerStyle: .roundedTopCorners,
                 accessory: .grabber,
@@ -46,8 +58,8 @@ enum CITBottomSheetExampleValue: String, CaseIterable, Identifiable {
         case .withCloseButton:
             return CITBottomSheetConfig(
                 backgroundColor: backgroundColor,
-                height: .fixed(height: 300),
-                width: .default,
+                height: defaultFixedHeight,
+                width: defaultWidth,
                 isDraggable: false,
                 cornerStyle: .roundedTopCorners,
                 accessory: .closeButton(backgroundStyle: .dark),
@@ -57,7 +69,7 @@ enum CITBottomSheetExampleValue: String, CaseIterable, Identifiable {
             return CITBottomSheetConfig(
                 backgroundColor: .orange,
                 height: .auto,
-                width: .default,
+                width: defaultWidth,
                 cornerStyle: .square,
                 accessory: .grabber,
                 overlayStyle: .default
@@ -65,8 +77,8 @@ enum CITBottomSheetExampleValue: String, CaseIterable, Identifiable {
         case .customOverlay:
             return CITBottomSheetConfig(
                 backgroundColor: backgroundColor,
-                height: .fixed(height: 300),
-                width: .default,
+                height: defaultFixedHeight,
+                width: defaultWidth,
                 cornerStyle: .roundedTopCorners,
                 accessory: .grabber,
                 overlayStyle: .custom(color: .red, opacity: 0.33)
@@ -74,16 +86,16 @@ enum CITBottomSheetExampleValue: String, CaseIterable, Identifiable {
         case .small:
             return CITBottomSheetConfig(
                 backgroundColor: backgroundColor,
-                height: .fixed(height: 300),
-                width: .fixed(width: UIScreen.main.bounds.width - 40),
+                height: defaultFixedHeight,
+                width: defaultSmallWidth,
                 cornerStyle: .roundedTopCorners,
                 overlayStyle: .default
             )
         case .floating:
             return CITBottomSheetConfig(
                 backgroundColor: backgroundColor,
-                height: .fixed(height: 300),
-                width: .fixed(width: UIScreen.main.bounds.width - 40),
+                height: defaultFixedHeight,
+                width: defaultSmallWidth,
                 cornerStyle: .roundedAllCorners,
                 accessory: .grabber,
                 overlayStyle: .default,
@@ -92,7 +104,7 @@ enum CITBottomSheetExampleValue: String, CaseIterable, Identifiable {
         case .normal:
             return CITBottomSheetConfig(
                 backgroundColor: backgroundColor,
-                height: .fixed(height: 300),
+                height: defaultFixedHeight,
                 cornerStyle: .roundedTopCorners
             )
         }
